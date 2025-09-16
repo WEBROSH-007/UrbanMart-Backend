@@ -1,3 +1,4 @@
+const jwt = require("jsonwebtoken");
 const signupModel = require("../models/authModel");
 const bcrypt = require("bcrypt");
 
@@ -5,7 +6,9 @@ const signupUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
     if (!name || !email || !password) {
-      return res.status(400).json({ error: "Name, email, and password are required." });
+      return res
+        .status(400)
+        .json({ error: "Name, email, and password are required." });
     }
 
     // Check if user exists
@@ -28,38 +31,38 @@ const signupUser = async (req, res) => {
   }
 };
 
-
 const loginUser = async (req, res) => {
-    try {
-      const { email, password } = req.body;
-      if (!email || !password) {
-        return res.status(400).json({ error: "Email and password are required" });
-      }
-  
-      // Find user
-      const user = await signupModel.findOne({ where: { email } });
-      if (!user) {
-        return res.status(400).json({ error: "Invalid email or password" });
-      }
-  
-      // Compare password with hash
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        return res.status(400).json({ error: "Invalid email or password" });
-      }
-  
-      res.json({ message: "Login successful" });
-    } catch (error) {
-      console.error("Error logging in:", error);
-      res.status(500).json({ error: "Failed to login" });
-    }
+  const { email, password } = req.body;
+  const data = {
+    email,
+    password,
   };
-  
+  const token = jwt.sign(data, process.env.JWT_SECRET);
+  try {
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required" });
+    }
 
+    // Find user
+    const user = await signupModel.findOne({ where: { email } });
+    if (!user) {
+      return res.status(400).json({ error: "Invalid email or password" });
+    }
 
+    // Compare password with hash
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ error: "Invalid email or password" });
+    }
 
+    res.json({ message: "Login successful", token });
+  } catch (error) {
+    console.error("Error logging in:", error);
+    res.status(500).json({ error: "Failed to login" });
+  }
+};
 
-module.exports ={
-    signupUser,
-    loginUser
-}
+module.exports = {
+  signupUser,
+  loginUser,
+};

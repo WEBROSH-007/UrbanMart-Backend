@@ -1,4 +1,4 @@
-require('dotenv').config();
+require("dotenv").config();
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../db/dbSequelize");
 
@@ -8,29 +8,28 @@ const signupModel = sequelize.define("Signup", {
     primaryKey: true,
     autoIncrement: true,
   },
-  name :{
+  name: {
     type: DataTypes.STRING,
     allowNull: false,
   },
   email: {
     type: DataTypes.STRING,
     allowNull: false,
-    unique : true,
+    unique: true,
   },
-  password : {
+  password: {
     type: DataTypes.STRING,
     allowNull: false,
   },
 });
 
 // sequelize
-//   .sync({ force:false })
+//   .sync({ force: false })
 //   .then(() => {
 //     console.log("Urban Mart Auth  table created successfully.");
 //   })
 //   .catch((err) => {
 //     console.error("Error creating table:", err);
 //   });
-
 
 module.exports = signupModel;
