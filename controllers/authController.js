@@ -27,7 +27,7 @@ const signupUser = async (req, res) => {
     res.status(201).json({ message: "User created successfully" });
   } catch (error) {
     console.error("Error creating user:", error);
-    res.status(500).json({ error: "Failed to create user" });
+    res.status(500).json({ error: error?.message  });
   }
 };
 
@@ -46,19 +46,19 @@ const loginUser = async (req, res) => {
     // Find user
     const user = await signupModel.findOne({ where: { email } });
     if (!user) {
-      return res.status(400).json({ error: "Invalid email or password" });
+      return res.status(400).json({ error: error?.message  });
     }
 
     // Compare password with hash
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ error: "Invalid email or password" });
+      return res.status(400).json({ error: error?.message  });
     }
 
     res.json({ message: "Login successful", token });
   } catch (error) {
     console.error("Error logging in:", error);
-    res.status(500).json({ error: "Failed to login" });
+    res.status(500).json({ error: error?.message  });
   }
 };
 
