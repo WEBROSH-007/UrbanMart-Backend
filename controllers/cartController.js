@@ -16,9 +16,7 @@ const addCart = async (req, res) => {
     });
 
     if (existingCart) {
-      return res
-        .status(400)
-        .json({ error: "Cart already exists in the cart" });
+      return res.status(400).json({ error: "Cart already exists in the cart" });
     }
 
     // ✅ Add product if not exists
@@ -34,7 +32,7 @@ const addCart = async (req, res) => {
 };
 const getcart = async (req, res) => {
   try {
-    const { userId} = req.params;
+    const { userId } = req.params;
 
     if (!userId) {
       return res.status(400).json({ error: "User ID is required" });
@@ -52,27 +50,26 @@ const getcart = async (req, res) => {
   }
 };
 
-const deleteCart =  async (req , res) =>{
-  try{
-      const { id} = req.params;
-      const params = req.params;
-      if (!id) {
-          return res.status(400).json({ error: "User ID is required" });
-        }
-        const cart = await cartModel.findOne({ where: { id } });
-  if (!cart) {
-    return res.status(400).json({ error: "Cart not found" });
-  }
-  await cart.destroy();
-  res.status(200).json({ message: "Cart deleted successfully", cart });
-  }
-  catch (error) {
-      res.status(500).json({ error: "Failed to delete cart" });
+const deleteCart = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const params = req.params;
+    if (!id) {
+      return res.status(400).json({ error: "User ID is required" });
     }
-}
+    const cart = await cartModel.findOne({ where: { id } });
+    if (!cart) {
+      return res.status(400).json({ error: "Cart not found" });
+    }
+    await cart.destroy();
+    res.status(200).json({ message: "Cart deleted successfully", cart });
+  } catch (error) {
+    res.status(500).json({ error: error?.message });
+  }
+};
 
 module.exports = {
   addCart,
   getcart,
-  deleteCart
+  deleteCart,
 };
